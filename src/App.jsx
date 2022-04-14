@@ -1,23 +1,24 @@
-import { useState, useEffect, ChangeEvent } from "react"
+import { useState, useEffect } from "react"
 import "bootstrap/dist/css/bootstrap.min.css"
 import "./App.css"
 import { Col, Container, FormControl, InputGroup, Row } from "react-bootstrap"
 
 export default function App() {
   const [city, setCity] = useState("")
-  const [lat, setLat] = useState("")
-  const [lon, setLon] = useState("")
+  const [lat, setLat] = useState(null)
+  const [lon, setLon] = useState(null)
   const [weather, setWeather] = useState(null)
 
   const key = process.env.REACT_APP_WEATHER_API_KEY
 
-  const geoApi = `http://api.openweathermap.org/geo/1.0/direct?q=${city}&limit=1&appid=${key}`
+  const geoApi = city && `http://api.openweathermap.org/geo/1.0/direct?q=${city}&limit=1&appid=${key}`
 
   const weatherApi = `https://api.openweathermap.org/data/2.5/onecall?lat=${lat}&lon=${lon}&exclude=hourly,minutely&appid=${key}`
 
   useEffect(() => {
     try {
       const fetchCoord = async () => {
+        if (!geoApi) return
         const response = await fetch(geoApi)
         if (response.ok) {
           const data = await response.json()
@@ -34,11 +35,12 @@ export default function App() {
     } catch (error) {
       console.log(error)
     }
-  }, [city, geoApi])
+  }, [geoApi])
 
   useEffect(() => {
     try {
       const fetchWeather = async () => {
+        if (!geoApi) return
         const response = await fetch(weatherApi)
         if (response.ok) {
           const data = await response.json()
@@ -52,8 +54,8 @@ export default function App() {
     } catch (error) {
       console.log(error)
     }
-    // eslint-disable-next-line
-  }, [city])
+  }, [weatherApi])
+
 
   return (
     <div className="App mt-5">
@@ -72,9 +74,10 @@ export default function App() {
           </Col>
         </Row>
         <Row>
-          <Col xs={10} md={8} className="mx-auto">
-            <h1>{city}</h1>
-            <h1>{weather?.current?.weather[0].description}</h1>
+          <Col xs={10} md={8} className="mx-auto mt-3">
+            <h1 className="mt-3">{city}</h1>
+            <h3 className="mt-3">{weather?.timezone}</h3>
+            <h3 className="mt-3">{weather?.current?.weather[0].description}</h3>
           </Col>
         </Row>
       </Container>
