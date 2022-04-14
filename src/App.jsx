@@ -4,15 +4,14 @@ import "./App.css"
 import { Col, Container, FormControl, InputGroup, Row } from "react-bootstrap"
 
 export default function App() {
-  const [city, setCity] = useState("London")
+  const [city, setCity] = useState("")
   const [lat, setLat] = useState("")
   const [lon, setLon] = useState("")
   const [weather, setWeather] = useState(null)
 
   const key = process.env.REACT_APP_WEATHER_API_KEY
 
-  const geoApi = `http://api.openweathermap.org/geo/1.0/direct?q=${city || "London"
-    }&limit=1&appid=${key}`
+  const geoApi = `http://api.openweathermap.org/geo/1.0/direct?q=${city}&limit=1&appid=${key}`
 
   const weatherApi = `https://api.openweathermap.org/data/2.5/onecall?lat=${lat}&lon=${lon}&exclude=hourly,minutely&appid=${key}`
 
@@ -75,7 +74,7 @@ export default function App() {
         <Row>
           <Col xs={10} md={8} className="mx-auto">
             <h1>{city}</h1>
-            <h1>{weather.current.weather[0].description}</h1>
+            <h1>{weather?.current?.weather[0].description}</h1>
           </Col>
         </Row>
       </Container>
